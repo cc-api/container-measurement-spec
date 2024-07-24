@@ -25,10 +25,40 @@ TODO
 TODO
 
 ## 3 Container Measurement Register
-TODO
+TPM PCR 0~15 is defined and used as firmware and system OS measurement in UAPI Group Specification Linux TPM PCR Registry, PCR 11 and 15 are used by multiple components and there are not conflicting uses, in container measurement, these two registers can be reused to extend the measurement of container runtime and application measurement inside a container.
+
+| PCR Index | Usage |
+| --- | --- |
+| 11 | The measurement of container runtime caller |
+| 15 | Application inside container |
 
 ## 4 Container Measurement Event Log
-TODO
+### 4.1 Container Measurement Event Types
+The CEL Event Content field is encoded in a TLV includes CEL, PCCLIENT_STD, IMA_TEMPLATE, IMA_TLV. Add a new TLV format CM_TLV for container integrity measurement layer.
+
+| \<CONTENT> TLV | | | |
+| --- | --- | --- | --- |
+| T | CEL          | 4 | Management Content Type |
+|   | PCCLIENT_STD | 5 | PC Client WG defined encapsulated structure |
+|   | IMA_TEMPLATE | 7 | Linux IMA_TEMPLATE format |
+|   | IMA_TLV      | 8 | IMA directly stored in CEL-TLV format |
+|   | CM_TLV       | 9 | Container Measurement TLV format |
+| L | |                | The length of the value (V) network byte order |
+| V | |                | The value, according to the type (T) |
+
+### 4.1.1 CM_TLV Content Layer
+
+| CM_TLV | | |
+| --- | --- | --- |
+| T | CM_TLV_CONTENT_ VERSION  | Version of container runtime and container runtime callers |
+|   | CM_TLV_CONTENT_CONFIG    | Configuration of container image and container runtime and container runtime callers |
+|   | CM_TLV_CONTENT_LAYER     | The layer of the container image |
+|   | CM_TLV_CONTENT_PROCESS   | Process binaries of container runtime and container runtime callers |
+|   | CM_TLV_CONTENT_CONTAINER | The status of container lifecycle |
+|   | CM_TLV_CONTENT_POD       | The status of one or more containers that run applications |
+|   | CM_TLV_CONTENT_CLUSTER   | The status of the cluster |
+| L | | The length of the value (V) |
+| V | | The value (V) containing data of the type (T) |
 
 ## Reference
 TODO
